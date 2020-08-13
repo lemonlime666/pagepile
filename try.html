@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="text" name="try" id="try">
+    <input type="button" value="點擊" id="add">
+    <input type="button" value="清除" id="cut">
+    <input type="button" value="清除" id="clear">
+
+    <hr>
+
+    <ul id='item' style="border: 1px solid maroon;width:200px;height: auto;"></ul>
+    <!-- <button id='show'>show</button> -->
+    <script>
+        window.addEventListener('load', function () {
+            let add = document.getElementById('add');
+            let cut = document.getElementById('cut');
+            let clear = document.getElementById('clear');
+            let val = document.getElementById('try');
+            let list = document.getElementById('item');
+            let i = 0;
+
+            add.addEventListener('click', function () {
+
+                if (val.value != '') {
+                    localStorage.setItem('userId', val.value);
+                    // i++;
+                    val.value = '';
+                    list.innerHTML = '';
+                    for (i = 0; i < localStorage.length; i++) {
+                        let li = document.createElement('li');
+                        li.innerText = localStorage.getItem(i);
+                        list.appendChild(li);
+                    }
+                }
+
+                // console.log(list.hasChildNodes('li'));
+            })
+            cut.addEventListener('click', function () {
+                localStorage.removeItem(i - 1);
+                if (list.childNodes.length != 0) {
+                    list.removeChild(list.lastChild)
+                }
+                i--;
+                // console.log(i);
+            })
+
+            clear.addEventListener('click', () => {
+                localStorage.clear();
+                list.innerHTML = '';
+                i = 0;
+            })
+
+            function li() {
+                list.addEventListener('click', function (e) {
+                    if(e.target.nodeName == 'LI'){
+                        e.target.remove();
+                    }
+                })
+            }
+            li();
+
+        })
+    </script>
+</body>
+
+</html>

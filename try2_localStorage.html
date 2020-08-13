@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="text" name="try" id="try">
+    <input type="button" value="點擊" id="add">
+    <input type="button" value="get" id='get'>
+    <input type="button" value="clear" id='clear'>
+
+    <hr>
+    <ul id='list' style="width: 200px;border: 4px double maroon;">
+
+    </ul>
+
+    <!-- <ul id='item' style="border: 1px solid maroon;width:200px;height: auto;"></ul> -->
+    <!-- <button id='show'>show</button> -->
+    <script>
+        window.addEventListener('load', function () {
+            let add = document.getElementById('add');
+            let val = document.getElementById('try');
+            let get = document.getElementById('get');
+            let clear = document.getElementById('clear');
+            let list = document.getElementById('list');
+
+            var items = [];
+            // var dataRemain = localStorage.getItem('userList');
+            // var data = dataRemain.split(',');
+            add.addEventListener('click', function () { //點擊存取localStorage
+                let input = val.value;
+                if (input != '') {
+                    items.push(input);
+                    console.log(items);
+                    localStorage.setItem('userList', items);
+                    val.value = ''; //input:text裡面清掉
+                    createLI(); //產生li在ul裡面
+                }
+            })
+
+            list.addEventListener('click', (e) => {
+                if (e.target.nodeName != "LI") { //如點擊的不是li不要做
+                    return
+                } else {
+                    let count = e.target.dataset.id; //抓取li的data
+                    e.target.remove(); //刪掉點擊的li
+                    items.splice(count - 1, 1); //連動的陣列刪掉這筆
+                    localStorage.setItem('userList', items); //localStorage重置新陣列
+                    list.innerHTML = ''; //ul裡面清空重新塞，因為需要更新新的data-set
+                    createLI();
+                }
+            })
+
+            clear.addEventListener('click', () => {
+                localStorage.clear();
+                list.innerHTML = '';
+            })
+
+            get.addEventListener('click', function () {
+                let users = localStorage.getItem('userList');
+                let user = users.split(',');
+                // console.log(user[2]);
+            })
+
+            function createLI() {
+                let str = '';
+                for (i = 0; i < items.length; i++) {
+                    str += `<li data-id='${i+1}'>${items[i]}</li>`
+                    list.innerHTML = str;
+                }
+            }
+
+        })
+    </script>
+</body>
+
+</html>

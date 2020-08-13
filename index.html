@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./node_modules/pagepiling.js/dist/jquery.pagepiling.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id='cursor'></div>
+    <div id="pagepiling">
+        <div class="section sec1">
+            <canvas id='c'></canvas>
+            <span id='qqq' class="colorPicker">1</span>
+            <span id='www' class="colorPicker">2</span>
+            <span id='eee' class="colorPicker">3</span>
+            <span id='rrr' class="colorPicker">4</span>
+            <span id='clearer'>CLEAR</span>
+            <img src="./lip.png" id='lip'>
+            <h2>PAGE1</h2>
+        </div>
+        <div class="section sec2">
+            <div class='tryTilt' data-tilt></div>
+            <div class='tryTilt' data-tilt></div>
+            <div class='tryTilt' data-tilt></div>
+            <h2>PAGE2</h2>
+        </div>
+        <div class="section sec3">
+            <div class="scrollbox">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+            </div>
+            <h2>PAGE3</h2>
+        </div>
+        <div class="section sec4">
+            <h2>PAGE4</h2>
+        </div>
+        <div class="section sec5">
+            <h2>PAGE5</h2>
+        </div>
+        <div class="section sec6">
+            <h2>PAGE6</h2>
+        </div>
+    </div>
+
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="./node_modules/pagepiling.js/dist/jquery.pagepiling.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#pagepiling').pagepiling({
+                menu: null,
+                direction: 'horizontal',
+                scrollingSpeed: 100,
+                loopBottom: true,
+                navigation: {
+                    'textColor': '#efefef',
+                    'bulletsColor': '#efefef',
+                    'position': 'right',
+                    'tooltips': ['section1', 'section2', 'section3', 'section4', 'section5', 'section6']
+                },
+                normalScrollElements: '.scrollbox',
+            });
+        });
+    </script>
+    <script src="./node_modules/tilt.js/dest/tilt.jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.tryTilt').tilt({
+                maxTilt: 30,
+                perspective: 1000, // Transform perspective, the lower the more extreme the tilt gets.
+                //easing: "cubic-bezier(.03,.98,.52,.99)",// Easing on enter/exit.
+                //scale: 1.5, // 2 = 200%, 1.5 = 150%, etc..
+                speed: 1000, // Speed of the enter/exit transition.
+                transition: true, // Set a transition on enter/exit.
+                // disableAxis: null, // What axis should be disabled. Can be X or Y.
+                // reset: true, // If the tilt effect has to be reset on exit.
+                glare: true, // Enables glare effect
+                maxGlare: .2, // From 0 - 1.
+                // reverse:true,
+            })
+        })
+    </script>
+    <script src="./node_modules/fabric/dist/fabric.js"></script>
+    <script>
+        window.addEventListener("load", () => {
+            const canvas = document.getElementById("c");
+            const ctx = canvas.getContext("2d");
+
+            //resizing
+            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+
+            // var
+            let painting = false;
+            var varColor = "#383838";
+
+            //forEach getColor();
+            let picker = document.querySelectorAll('.colorPicker');
+            picker.forEach(function (item, index, array) {
+                item.addEventListener('click', function () {
+                    let style = window.getComputedStyle(item, null).getPropertyValue(
+                        'background-color');
+                    // console.log(item, index, array);
+                    // console.log(style);
+                    varColor = style;
+                    changeCursor(style);
+                })
+            });
+
+            //jQuery getColor();
+            // $('.colorPicker').click(function(){
+            //     let style = window.getComputedStyle(this, null).getPropertyValue("background-color");
+            //     console.log(style);
+            //     varColor = style;
+            // })
+
+            function startPosition(e) {
+                painting = true;
+                draw(e);
+            }
+
+            function endPosition() {
+                painting = false;
+                ctx.beginPath();
+            }
+
+            function draw(e) {
+                if (!painting) return;
+                ctx.lineWidth = 10;
+                ctx.lineCap = "round";
+                ctx.strokeStyle = varColor;
+                // console.log(varColor);
+
+                ctx.lineTo(e.clientX, e.clientY);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(e.clientX, e.clientY);
+            }
+
+            canvas.addEventListener('mousedown', startPosition);
+            canvas.addEventListener('mouseup', endPosition);
+            canvas.addEventListener('mousemove', draw);
+
+            $('#clearer').click(function () {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                $('#cursor').css({
+                    display: 'none',
+                })
+                $('#c').css({
+                    cursor: 'default',
+                })
+            })
+        });
+        //========================================================
+
+        //changeMouse
+        function changeCursor(style) {
+            $('#cursor').css({
+                display: 'block',
+                backgroundColor: style,
+            })
+            $('body').mousemove(function (e) {
+                $('#cursor').css({
+                    top: `${e.pageY}px`,
+                    left: `${e.pageX}px`,
+                })
+            })
+            $('#c').css({
+                cursor: 'pointer',
+            })
+        }
+
+        // function move(e) {
+        //     $('body').mousemove(function (e) {
+        //         $('#cursor').css({
+        //             top: `${e.pageY - 10}px`,
+        //             left: `${e.pageX - 10}px`,
+        //         })
+        //     })
+        // }
+    </script>
+</body>
+
+</html>
